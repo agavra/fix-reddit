@@ -1,0 +1,8 @@
+{
+  "extension_name": {
+    "message": "FixReddit"
+  },
+  "extension_description": {
+    "message": "Redirects Reddit to the desktop old.reddit.com site and applies a mobile-friendly layout."
+  }
+}

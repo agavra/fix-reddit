@@ -1,0 +1,11 @@
+build/
+DerivedData/
+*.xcuserdata/
+xcuserdata/
+*.xcuserstate
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+node_modules/
