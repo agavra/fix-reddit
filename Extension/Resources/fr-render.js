@@ -591,6 +591,83 @@
 
   // ---------- Comments ----------
 
+  function renderOpMedia(post) {
+    if (!post._el) return null;
+    const expando = post._el.querySelector(".expando");
+    if (!expando) return null;
+
+    const videoNode = expando.querySelector(
+      "[data-hls-url], [data-mpd-url]"
+    );
+    if (videoNode) {
+      const hls = videoNode.getAttribute("data-hls-url");
+      const w = parseInt(videoNode.getAttribute("data-video-width"), 10);
+      const h = parseInt(videoNode.getAttribute("data-video-height"), 10);
+      const src = hls || videoNode.getAttribute("data-mpd-url");
+      if (src) {
+        const video = el("video", {
+          class: "fr-op-video",
+          attrs: {
+            src,
+            controls: "",
+            playsinline: "",
+            preload: "metadata",
+          },
+          style:
+            w && h ? { aspectRatio: w + " / " + h } : { aspectRatio: "16 / 9" },
+        });
+        return el("div", { class: "fr-op-media fr-op-media-video" }, video);
+      }
+    }
+
+    const galleryPreviews = expando.querySelectorAll(
+      ".gallery-preview .media-preview-content"
+    );
+    if (galleryPreviews.length) {
+      const wrap = el("div", { class: "fr-op-gallery" });
+      galleryPreviews.forEach((node) => {
+        const img = node.querySelector("img.preview, img");
+        if (!img || !img.src) return;
+        const a = node.querySelector("a");
+        const item = el("a", {
+          class: "fr-op-gallery-item",
+          href: (a && a.href) || img.src,
+          attrs: { target: "_self" },
+        });
+        item.appendChild(
+          el("img", {
+            attrs: { src: img.src, alt: "", loading: "lazy" },
+          })
+        );
+        wrap.appendChild(item);
+      });
+      if (wrap.firstChild) {
+        return el("div", { class: "fr-op-media fr-op-media-gallery" }, wrap);
+      }
+    }
+
+    const imagePreview = expando.querySelector(
+      ".media-preview-content img.preview, .media-preview-content img"
+    );
+    if (imagePreview && imagePreview.src) {
+      const linkA = imagePreview.closest("a");
+      const wrap = el("a", {
+        class: "fr-op-image-link",
+        href: (linkA && linkA.href) || post.url,
+        attrs: { target: "_self" },
+      });
+      wrap.appendChild(
+        el("img", {
+          class: "fr-op-image",
+          attrs: { src: imagePreview.src, alt: "", loading: "lazy" },
+        })
+      );
+      return el("div", { class: "fr-op-media fr-op-media-image" }, wrap);
+    }
+
+    return null;
+  }
+
   function renderOpCard(post) {
     const card = el("article", { class: "fr-op-card" });
     const head = el("div", { class: "fr-op-head" });
@@ -628,12 +705,17 @@
     card.appendChild(head);
 
     if (!post.isSelf && post.url) {
-      const linkCard = el("a", {
-        class: "fr-op-link",
-        href: post.url,
-        text: post.url,
-      });
-      card.appendChild(linkCard);
+      const media = renderOpMedia(post);
+      if (media) {
+        card.appendChild(media);
+      } else {
+        const linkCard = el("a", {
+          class: "fr-op-link",
+          href: post.url,
+          text: post.url,
+        });
+        card.appendChild(linkCard);
+      }
     }
 
     if (post._el) {

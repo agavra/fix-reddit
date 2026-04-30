@@ -678,6 +678,65 @@ html.fr-rebuild .fr-op-link {
   word-break: break-all;
 }
 
+html.fr-rebuild .fr-op-media {
+  margin: 0 calc(var(--fr-s-4) * -1);
+  background: #000;
+  border-top: 1px solid var(--fr-border);
+  border-bottom: 1px solid var(--fr-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+html.fr-rebuild .fr-op-image-link {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+html.fr-rebuild .fr-op-image {
+  display: block;
+  max-width: 100%;
+  max-height: 80vh;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+html.fr-rebuild .fr-op-video {
+  display: block;
+  width: 100%;
+  max-height: 80vh;
+  background: #000;
+}
+
+html.fr-rebuild .fr-op-gallery {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+html.fr-rebuild .fr-op-gallery-item {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+html.fr-rebuild .fr-op-gallery-item img {
+  display: block;
+  max-height: 70vh;
+  max-width: 90vw;
+  height: auto;
+  object-fit: contain;
+}
+
 html.fr-rebuild .fr-op-body {
   font-size: var(--fr-font-body);
   line-height: var(--fr-lh-body);
