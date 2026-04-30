@@ -3,28 +3,29 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		078BA6FED656D5051680144C /* fr-actions.js in Resources */ = {isa = PBXBuildFile; fileRef = 927558A36EE73C552A08C691 /* fr-actions.js */; };
 		1613B10D055C2DD77DF21E7D /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = 6AF348FC61AC76F294333511 /* _locales */; };
+		1B07B7C5AA039575D0E7D8EF /* fr-parser.js in Resources */ = {isa = PBXBuildFile; fileRef = 27946F5334D6F93AAAB38AA0 /* fr-parser.js */; };
+		1C56951DA3DA6300F7E083B6 /* fr-render.js in Resources */ = {isa = PBXBuildFile; fileRef = 0C77F105183EE373B6AFAEF4 /* fr-render.js */; };
 		2DDBA2CB052724C8CD970C5F /* rules.json in Resources */ = {isa = PBXBuildFile; fileRef = C4E22196467CA635115B05FE /* rules.json */; };
 		367DCAD3E1BC13C04A77161E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B1E2AC931B428E872E9946 /* ContentView.swift */; };
+		40A77B3F323152D87409A268 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A22A2B8632604081BF374000 /* Assets.xcassets */; };
 		610472EAC1ABA637D64C4133 /* popup.css in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C0DE9988129BCACCB1A99 /* popup.css */; };
 		621AA885ABB828097C9808D4 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C5DBBA9789222BDEAF24886 /* manifest.json */; };
 		688EC62F01E080D2CAAA84DD /* FixRedditApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0F7A015CBBB809230ABBBC /* FixRedditApp.swift */; };
 		735B773736547DB66F5F6347 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = BBDED8FA7CABDC10CCA58AA9 /* content.js */; };
 		8186E8965639206E44BBC7BA /* reddit-mobile.css in Resources */ = {isa = PBXBuildFile; fileRef = 8DA2BD358A91EF14BE180CE9 /* reddit-mobile.css */; };
 		9308DE045FDDBFBFB27F2CA6 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 211A7AEE4E329AB9BC7CBF8A /* background.js */; };
-		A1B0EE1D5F301122334455F0 /* fr-bootstrap.js in Resources */ = {isa = PBXBuildFile; fileRef = A1B0EE1D5F301122334455F1 /* fr-bootstrap.js */; };
-		A1B0EE1D5F301122334455F2 /* fr-app.css in Resources */ = {isa = PBXBuildFile; fileRef = A1B0EE1D5F301122334455F3 /* fr-app.css */; };
-		A1B0EE1D5F301122334455F4 /* fr-parser.js in Resources */ = {isa = PBXBuildFile; fileRef = A1B0EE1D5F301122334455F5 /* fr-parser.js */; };
-		A1B0EE1D5F301122334455F6 /* fr-render.js in Resources */ = {isa = PBXBuildFile; fileRef = A1B0EE1D5F301122334455F7 /* fr-render.js */; };
-		A1B0EE1D5F301122334455F8 /* fr-actions.js in Resources */ = {isa = PBXBuildFile; fileRef = A1B0EE1D5F301122334455F9 /* fr-actions.js */; };
 		94059EA5A2A2CFE232AB1FAF /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC04ED1CA5026BC6E2F4246 /* SafariWebExtensionHandler.swift */; };
 		9A7B3977CC26A05D50DB2E4E /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 3D64A6AAFBCEA96CEC98717F /* popup.html */; };
 		B218D654DD9A628517480072 /* FixRedditExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B32BC187ACBD2F263A19B86B /* FixRedditExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CBFEE7672933179EE1B4837F /* images in Resources */ = {isa = PBXBuildFile; fileRef = F4539EFF4E51864F49A04582 /* images */; };
+		CE94ED389347DCF93AE802B1 /* fr-bootstrap.js in Resources */ = {isa = PBXBuildFile; fileRef = B14F9308BB716B23267DD9A5 /* fr-bootstrap.js */; };
+		DCB858BECD4B6FC8071F37A5 /* fr-app.css in Resources */ = {isa = PBXBuildFile; fileRef = 3DE167AE9D516B2AF4F63032 /* fr-app.css */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,23 +53,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0C77F105183EE373B6AFAEF4 /* fr-render.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-render.js"; sourceTree = "<group>"; };
 		1AC04ED1CA5026BC6E2F4246 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
 		211A7AEE4E329AB9BC7CBF8A /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
+		27946F5334D6F93AAAB38AA0 /* fr-parser.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-parser.js"; sourceTree = "<group>"; };
 		34B1E2AC931B428E872E9946 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3C5DBBA9789222BDEAF24886 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
 		3D64A6AAFBCEA96CEC98717F /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = popup.html; sourceTree = "<group>"; };
+		3DE167AE9D516B2AF4F63032 /* fr-app.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "fr-app.css"; sourceTree = "<group>"; };
 		6AF348FC61AC76F294333511 /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _locales; path = Extension/Resources/_locales; sourceTree = SOURCE_ROOT; };
-		86F3145FD25F986BC872439E /* FixReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FixReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86F3145FD25F986BC872439E /* FixReddit.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FixReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DA2BD358A91EF14BE180CE9 /* reddit-mobile.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "reddit-mobile.css"; sourceTree = "<group>"; };
 		8F5C0DE9988129BCACCB1A99 /* popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = popup.css; sourceTree = "<group>"; };
+		927558A36EE73C552A08C691 /* fr-actions.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-actions.js"; sourceTree = "<group>"; };
+		A22A2B8632604081BF374000 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B14F9308BB716B23267DD9A5 /* fr-bootstrap.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-bootstrap.js"; sourceTree = "<group>"; };
 		B250C76F226C2E42532BF98B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		B32BC187ACBD2F263A19B86B /* FixRedditExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FixRedditExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32BC187ACBD2F263A19B86B /* FixRedditExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FixRedditExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBDED8FA7CABDC10CCA58AA9 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
-		A1B0EE1D5F301122334455F1 /* fr-bootstrap.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-bootstrap.js"; sourceTree = "<group>"; };
-		A1B0EE1D5F301122334455F3 /* fr-app.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "fr-app.css"; sourceTree = "<group>"; };
-		A1B0EE1D5F301122334455F5 /* fr-parser.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-parser.js"; sourceTree = "<group>"; };
-		A1B0EE1D5F301122334455F7 /* fr-render.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-render.js"; sourceTree = "<group>"; };
-		A1B0EE1D5F301122334455F9 /* fr-actions.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fr-actions.js"; sourceTree = "<group>"; };
 		C4E22196467CA635115B05FE /* rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = rules.json; sourceTree = "<group>"; };
 		F4539EFF4E51864F49A04582 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = Extension/Resources/images; sourceTree = SOURCE_ROOT; };
 		FE0F7A015CBBB809230ABBBC /* FixRedditApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixRedditApp.swift; sourceTree = "<group>"; };
@@ -89,11 +91,11 @@
 			children = (
 				211A7AEE4E329AB9BC7CBF8A /* background.js */,
 				BBDED8FA7CABDC10CCA58AA9 /* content.js */,
-				A1B0EE1D5F301122334455F1 /* fr-bootstrap.js */,
-				A1B0EE1D5F301122334455F5 /* fr-parser.js */,
-				A1B0EE1D5F301122334455F7 /* fr-render.js */,
-				A1B0EE1D5F301122334455F9 /* fr-actions.js */,
-				A1B0EE1D5F301122334455F3 /* fr-app.css */,
+				927558A36EE73C552A08C691 /* fr-actions.js */,
+				3DE167AE9D516B2AF4F63032 /* fr-app.css */,
+				B14F9308BB716B23267DD9A5 /* fr-bootstrap.js */,
+				27946F5334D6F93AAAB38AA0 /* fr-parser.js */,
+				0C77F105183EE373B6AFAEF4 /* fr-render.js */,
 				3C5DBBA9789222BDEAF24886 /* manifest.json */,
 				8F5C0DE9988129BCACCB1A99 /* popup.css */,
 				3D64A6AAFBCEA96CEC98717F /* popup.html */,
@@ -119,6 +121,7 @@
 		C1BD12EF2A69AE188C412431 /* FixReddit */ = {
 			isa = PBXGroup;
 			children = (
+				A22A2B8632604081BF374000 /* Assets.xcassets */,
 				34B1E2AC931B428E872E9946 /* ContentView.swift */,
 				FE0F7A015CBBB809230ABBBC /* FixRedditApp.swift */,
 				B250C76F226C2E42532BF98B /* Info.plist */,
@@ -142,6 +145,7 @@
 			buildConfigurationList = 09F2FCE27AF5FB86737CED9D /* Build configuration list for PBXNativeTarget "FixReddit" */;
 			buildPhases = (
 				3745D35DB613885A0BDB26E2 /* Sources */,
+				48593D844A6F71EAC59E0F95 /* Resources */,
 				8877ECB9D03F9DA5D062B75A /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -193,6 +197,7 @@
 			);
 			mainGroup = 7A81381E9A4F3E0EDEE0AD5E;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -203,6 +208,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		48593D844A6F71EAC59E0F95 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				40A77B3F323152D87409A268 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		77B244713AD98C4912831279 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -210,11 +223,11 @@
 				1613B10D055C2DD77DF21E7D /* _locales in Resources */,
 				9308DE045FDDBFBFB27F2CA6 /* background.js in Resources */,
 				735B773736547DB66F5F6347 /* content.js in Resources */,
-				A1B0EE1D5F301122334455F0 /* fr-bootstrap.js in Resources */,
-				A1B0EE1D5F301122334455F4 /* fr-parser.js in Resources */,
-				A1B0EE1D5F301122334455F6 /* fr-render.js in Resources */,
-				A1B0EE1D5F301122334455F8 /* fr-actions.js in Resources */,
-				A1B0EE1D5F301122334455F2 /* fr-app.css in Resources */,
+				078BA6FED656D5051680144C /* fr-actions.js in Resources */,
+				DCB858BECD4B6FC8071F37A5 /* fr-app.css in Resources */,
+				CE94ED389347DCF93AE802B1 /* fr-bootstrap.js in Resources */,
+				1B07B7C5AA039575D0E7D8EF /* fr-parser.js in Resources */,
+				1C56951DA3DA6300F7E083B6 /* fr-render.js in Resources */,
 				CBFEE7672933179EE1B4837F /* images in Resources */,
 				621AA885ABB828097C9808D4 /* manifest.json in Resources */,
 				610472EAC1ABA637D64C4133 /* popup.css in Resources */,
@@ -258,9 +271,8 @@
 		41128F6A799C2B4C7536F589 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = FixReddit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -336,7 +348,6 @@
 		80E028DFDF8B360056C0C229 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = Extension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -344,11 +355,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					SafariServices,
-				);
+				OTHER_LDFLAGS = "$(inherited) -framework SafariServices";
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.fixreddit.Extension;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -359,7 +366,6 @@
 		836033869434EB4C1FC9E240 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = Extension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -367,11 +373,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					SafariServices,
-				);
+				OTHER_LDFLAGS = "$(inherited) -framework SafariServices";
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.fixreddit.Extension;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -382,9 +384,8 @@
 		CF0FD52C3F3F448A65051BCD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = FixReddit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (

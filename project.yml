@@ -24,7 +24,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.fixreddit
         INFOPLIST_FILE: FixReddit/Info.plist
         TARGETED_DEVICE_FAMILY: "1,2"
-        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
   FixRedditExtension:
     type: app-extension
@@ -39,6 +39,16 @@ targets:
       - path: Extension/Resources/background.js
         buildPhase: resources
       - path: Extension/Resources/content.js
+        buildPhase: resources
+      - path: Extension/Resources/fr-bootstrap.js
+        buildPhase: resources
+      - path: Extension/Resources/fr-parser.js
+        buildPhase: resources
+      - path: Extension/Resources/fr-actions.js
+        buildPhase: resources
+      - path: Extension/Resources/fr-render.js
+        buildPhase: resources
+      - path: Extension/Resources/fr-app.css
         buildPhase: resources
       - path: Extension/Resources/reddit-mobile.css
         buildPhase: resources
