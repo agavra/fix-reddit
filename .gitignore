@@ -1,11 +1,9 @@
-build/
-DerivedData/
-*.xcuserdata/
-xcuserdata/
-*.xcuserstate
+node_modules/
+dist/
+web-ext-artifacts/
+.web-ext/
 .DS_Store
 *.swp
 *.swo
 .vscode/
 .idea/
-node_modules/

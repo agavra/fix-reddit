@@ -1,0 +1,83 @@
+name: Release
+
+# Tag a commit with v1.2.3 and push the tag to sign the extension with Mozilla
+# and attach the signed XPI to a GitHub Release.
+#
+# One-time setup:
+#
+#   1. At https://addons.mozilla.org/developers/addon/api/key/, generate a JWT
+#      credential pair.
+#   2. Add these GitHub Actions secrets to the repo:
+#        AMO_JWT_ISSUER   the JWT issuer (looks like user:12345:67)
+#        AMO_JWT_SECRET   the JWT secret (long hex string)
+#
+# Distribution channel is `unlisted` — Mozilla auto-signs the build and the
+# signed XPI is attached to the GitHub Release for users to install directly.
+# Switch `--channel=unlisted` to `--channel=listed` if you want it to update
+# the addons.mozilla.org public listing instead (requires the listing to be
+# set up first in the AMO developer hub).
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Stamp manifest version
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = 'src/manifest.json';
+            const m = JSON.parse(fs.readFileSync(path, 'utf8'));
+            m.version = process.env.VERSION;
+            fs.writeFileSync(path, JSON.stringify(m, null, 2) + '\n');
+          "
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Quick checks
+        run: |
+          node --check src/content.js
+          node --check src/background.js
+          node -e "for (const f of ['src/manifest.json','src/rules.json','src/_locales/en/messages.json']) JSON.parse(require('fs').readFileSync(f, 'utf8'))"
+
+      - name: Lint extension
+        run: npx --yes web-ext@latest lint --source-dir=src
+
+      - name: Sign with AMO
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: |
+          npx --yes web-ext@latest sign \
+            --source-dir=src \
+            --artifacts-dir=dist \
+            --channel=unlisted
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.xpi
+          generate_release_notes: true
+          body: |
+            ## Install in Firefox
+
+            Click the signed `.xpi` in the assets below and confirm the install
+            prompt. Mozilla has signed the build, so no `about:config` overrides
+            or Developer Edition are required.

@@ -1,40 +1,33 @@
 # Agent Notes
 
-This repository contains a generated Xcode project for an iOS Safari Web Extension. Treat `project.yml` as the source of truth for target structure and resource copying.
+This repository is a Firefox WebExtension (Manifest V3). All shipping code lives
+under `src/`.
 
 ## Core Workflow
 
-1. Edit source files.
+1. Edit source files under `src/`.
 2. Run lightweight checks:
 
    ```sh
-   node --check Extension/Resources/content.js
-   node --check Extension/Resources/background.js
-   node -e "for (const f of ['Extension/Resources/manifest.json','Extension/Resources/rules.json','Extension/Resources/_locales/en/messages.json']) JSON.parse(require('fs').readFileSync(f, 'utf8'))"
-   plutil -lint FixReddit/Info.plist Extension/Info.plist
+   node --check src/content.js
+   node --check src/background.js
+   node -e "for (const f of ['src/manifest.json','src/rules.json','src/_locales/en/messages.json']) JSON.parse(require('fs').readFileSync(f, 'utf8'))"
+   npx web-ext lint --source-dir=src
    ```
 
-3. Build:
+3. Run a dev browser with the extension loaded:
 
    ```sh
-   xcodebuild -project FixReddit.xcodeproj -target FixReddit -sdk iphonesimulator build
-   ```
-
-4. For UX work, install into the booted simulator and screenshot:
-
-   ```sh
-   xcrun simctl install booted build/Debug-iphonesimulator/FixReddit.app
-   xcrun simctl openurl booted https://old.reddit.com/
-   xcrun simctl io booted screenshot /tmp/fixreddit.png
+   npx web-ext run --source-dir=src
    ```
 
 ## Important Files
 
-- `Extension/Resources/reddit-mobile.css`: primary mobile layout and typography.
-- `Extension/Resources/content.js`: post navigation, promo removal, toolbar, comment controls, page shims.
-- `Extension/Resources/rules.json`: DNR redirect and User-Agent rewrite rules.
-- `Extension/Resources/manifest.json`: extension permissions and resource declarations.
-- `project.yml`: XcodeGen target structure. Extension resources must be listed here with `buildPhase: resources`.
+- `src/reddit-mobile.css`: primary mobile layout and typography.
+- `src/content.js`: post navigation, promo removal, toolbar, comment controls,
+  page shims.
+- `src/rules.json`: DNR redirect and User-Agent rewrite rules.
+- `src/manifest.json`: extension permissions and resource declarations.
 
 ## UX Baseline
 
@@ -47,18 +40,17 @@ The current target experience is a dense mobile reader:
 - Explicit links/buttons keep their normal behavior.
 - A narrow floating right rail provides `Top`, `Next`, and `Info`.
 
-Do not reintroduce full-width floating toolbars or large repeated action buttons in the feed unless explicitly requested.
-
-## Safari Extension Gotchas
-
-- If Safari Settings does not show the extension, the `.appex` likely lacks `manifest.json`.
-- If redirects/scripts do not run, host access may be disabled in iOS Settings > Safari > Extensions.
-- If Reddit still shows mobile UI, it may be using viewport/cookie/client checks rather than only the HTTP User-Agent.
-- Safari may require re-approval after permission changes in `manifest.json`.
+Do not reintroduce full-width floating toolbars or large repeated action
+buttons in the feed unless explicitly requested.
 
 ## Editing Constraints
 
 - Keep CSS scoped under `.fix-reddit-mobile`.
 - Avoid broad DOM deletion in `content.js`; remove only promo-shaped nodes.
-- Preserve normal click behavior for anchors, buttons, form controls, vote arrows, thumbnails, media, and expandos.
-- Keep generated build output ignored.
+- Preserve normal click behavior for anchors, buttons, form controls, vote
+  arrows, thumbnails, media, and expandos.
+- Reddit can still infer mobile from viewport width, cookies, or server-side
+  experiments. The extension therefore both spoofs desktop signals and removes
+  mobile/app promo UI.
+- Old Reddit markup is stable but it is not an API. Keep selectors broad enough
+  to tolerate minor class changes.
