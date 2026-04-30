@@ -1,5 +1,7 @@
 # FixReddit
 
+![FixReddit before and after](docs/fixreddit.png)
+
 FixReddit is an iOS Safari Web Extension that makes Reddit usable on an iPhone
 by forcing Reddit traffic to `old.reddit.com` and reshaping old Reddit into a
 mobile-friendly reader.
