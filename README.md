@@ -18,7 +18,8 @@ in the Safari extension resources under `src/`.
 - Reflows old Reddit listing cards for phone-sized viewports.
 - Makes post cards open the comments page when tapped, while preserving normal
   taps on links, thumbnails, votes, media, and controls.
-- Adds a small floating rail for `Top`, `Next`, and sidebar `Info`.
+- Adds a hamburger button in the top bar that opens a sidebar drawer with
+  account controls and the subreddit `Info`.
 - Adds collapse/expand controls to comment threads.
 
 ## Project Layout
@@ -136,7 +137,7 @@ for the required GitHub Actions secrets.
 - Redirect fallback if network redirects are skipped.
 - Desktop identity shim for `navigator.userAgent`, `navigator.platform`, and
   touch signals.
-- Mobile toolbar injection.
+- Sidebar drawer toggle injected into the top bar.
 - Post card navigation to comments.
 - Comment collapse controls.
 - Promo/signup cleanup with a mutation observer.

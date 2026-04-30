@@ -70,7 +70,6 @@
 
   function installMobileTools() {
     document.body.classList.add("fix-reddit-mobile-ready");
-    installToolbar();
     improvePostLinks();
     installPostCardNavigation();
     improveCommentControls();
@@ -79,6 +78,7 @@
     rewritePagename();
     cleanHeaderRight();
     relocateAccountControls();
+    installSidebarToggle();
     maybeOpenSidebarFromQuery();
     observeDynamicContent();
   }
@@ -282,24 +282,24 @@
     pagename.dataset.fixRedditRewritten = "true";
   }
 
-  function installToolbar() {
-    if (document.querySelector(".fix-reddit-toolbar")) {
+  function installSidebarToggle() {
+    const header = document.querySelector("#header");
+
+    if (!header || header.querySelector(".fix-reddit-menu-toggle")) {
       return;
     }
 
-    const toolbar = document.createElement("div");
-    toolbar.className = "fix-reddit-toolbar";
+    const ICON_MENU = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 
-    const ICON_TOP = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M6 14l6-6 6 6" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    const ICON_NEXT = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    const ICON_MENU = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/></svg>';
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "fix-reddit-menu-toggle";
+    toggle.innerHTML = ICON_MENU;
+    toggle.setAttribute("aria-label", "Info / sidebar");
+    toggle.title = "Info / sidebar";
+    toggle.addEventListener("click", () => document.body.classList.toggle("fix-reddit-sidebar-open"));
 
-    const topButton = makeIconButton(ICON_TOP, "Top", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-    const nextButton = makeIconButton(ICON_NEXT, "Next page", goToNextPage);
-    const sidebarButton = makeIconButton(ICON_MENU, "Info / sidebar", () => document.body.classList.toggle("fix-reddit-sidebar-open"));
-
-    toolbar.append(topButton, nextButton, sidebarButton);
-    document.body.appendChild(toolbar);
+    header.appendChild(toggle);
   }
 
   function makeButton(label, action) {
@@ -308,24 +308,6 @@
     button.textContent = label;
     button.addEventListener("click", action);
     return button;
-  }
-
-  function makeIconButton(iconHtml, ariaLabel, action) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.innerHTML = iconHtml;
-    button.setAttribute("aria-label", ariaLabel);
-    button.title = ariaLabel;
-    button.addEventListener("click", action);
-    return button;
-  }
-
-  function goToNextPage() {
-    const next = document.querySelector(".nextprev a[rel='nofollow next'], .next-button a, span.next-button a");
-
-    if (next instanceof HTMLAnchorElement) {
-      location.href = next.href;
-    }
   }
 
   function removePromos() {

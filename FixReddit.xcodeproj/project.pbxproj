@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -62,11 +62,11 @@
 		6AF348FC61AC76F294333511 /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _locales; path = src/_locales; sourceTree = SOURCE_ROOT; };
 		6DCD695D7AF784948A79C028 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
 		819CCF5889162C96FF71DA7A /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = popup.html; sourceTree = "<group>"; };
-		86F3145FD25F986BC872439E /* FixReddit.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FixReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86F3145FD25F986BC872439E /* FixReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FixReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A22A2B8632604081BF374000 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A3D62526C4F20BDD4E242CE9 /* fr-app.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "fr-app.css"; sourceTree = "<group>"; };
 		B250C76F226C2E42532BF98B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		B32BC187ACBD2F263A19B86B /* FixRedditExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FixRedditExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32BC187ACBD2F263A19B86B /* FixRedditExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FixRedditExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4C9BD47F2BCC5009DEE0E86 /* popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = popup.css; sourceTree = "<group>"; };
 		C7712827A23B10136055E550 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
 		CB1CC17041F56808097AB467 /* reddit-mobile.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "reddit-mobile.css"; sourceTree = "<group>"; };
@@ -196,7 +196,6 @@
 			);
 			mainGroup = 7A81381E9A4F3E0EDEE0AD5E;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -272,6 +271,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = FixReddit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -347,6 +347,7 @@
 		80E028DFDF8B360056C0C229 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = Extension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -354,7 +355,11 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) -framework SafariServices";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					SafariServices,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.agavra.fixreddit.Extension;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -365,6 +370,7 @@
 		836033869434EB4C1FC9E240 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = Extension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -372,7 +378,11 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) -framework SafariServices";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					SafariServices,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.agavra.fixreddit.Extension;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -385,6 +395,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = Z7ACSSZLLN;
 				INFOPLIST_FILE = FixReddit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
