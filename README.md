@@ -144,3 +144,7 @@ plutil -lint FixReddit/Info.plist Extension/Info.plist
 - Keep extension resources explicitly listed in `project.yml`; otherwise they may not be copied into the `.appex`.
 - Rebuild and reinstall after every extension resource change. Safari does not hot-reload the installed extension bundle.
 - Use simulator screenshots to validate actual layout before declaring UX work done.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
