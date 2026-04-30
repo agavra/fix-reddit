@@ -1,83 +1,128 @@
 name: Release
 
-# Tag a commit with v1.2.3 and push the tag to sign the extension with Mozilla
-# and attach the signed XPI to a GitHub Release.
+# Tag a commit with v1.2.3 and push the tag to upload to TestFlight.
 #
 # One-time setup:
 #
-#   1. At https://addons.mozilla.org/developers/addon/api/key/, generate a JWT
-#      credential pair.
-#   2. Add these GitHub Actions secrets to the repo:
-#        AMO_JWT_ISSUER   the JWT issuer (looks like user:12345:67)
-#        AMO_JWT_SECRET   the JWT secret (long hex string)
-#
-# Distribution channel is `unlisted` — Mozilla auto-signs the build and the
-# signed XPI is attached to the GitHub Release for users to install directly.
-# Switch `--channel=unlisted` to `--channel=listed` if you want it to update
-# the addons.mozilla.org public listing instead (requires the listing to be
-# set up first in the AMO developer hub).
+#   1. In App Store Connect, create the app record with bundle ID
+#      com.agavra.fixreddit (matching project.yml).
+#   2. In Apple Developer, create an iOS Distribution certificate, export it
+#      from Keychain Access as a .p12 with a password.
+#   3. In App Store Connect → Users and Access → Integrations → App Store
+#      Connect API, create a key with the "App Manager" role. Save the .p8,
+#      key ID, and issuer ID.
+#   4. Add these GitHub Actions secrets to the repo:
+#        BUILD_CERTIFICATE_BASE64       base64 of the distribution .p12
+#        P12_PASSWORD                   password for the .p12
+#        KEYCHAIN_PASSWORD              any random string (used for temp keychain)
+#        APP_STORE_CONNECT_KEY_ID       the API key ID (e.g. ABCDE12345)
+#        APP_STORE_CONNECT_ISSUER_ID    the API key issuer UUID
+#        APP_STORE_CONNECT_PRIVATE_KEY  the raw contents of the .p8 file
+#        APPLE_TEAM_ID                  your 10-character team ID
 
 on:
   push:
     tags:
       - 'v*'
 
-permissions:
-  contents: write
-
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
 
       - name: Extract version from tag
         id: version
         run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
-      - name: Stamp manifest version
-        run: |
-          node -e "
-            const fs = require('fs');
-            const path = 'src/manifest.json';
-            const m = JSON.parse(fs.readFileSync(path, 'utf8'));
-            m.version = process.env.VERSION;
-            fs.writeFileSync(path, JSON.stringify(m, null, 2) + '\n');
-          "
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
+      - name: Generate Xcode project
+        run: xcodegen generate
 
       - name: Quick checks
         run: |
           node --check src/content.js
           node --check src/background.js
           node -e "for (const f of ['src/manifest.json','src/rules.json','src/_locales/en/messages.json']) JSON.parse(require('fs').readFileSync(f, 'utf8'))"
+          plutil -lint FixReddit/Info.plist Extension/Info.plist
 
-      - name: Lint extension
-        run: npx --yes web-ext@latest lint --source-dir=src
-
-      - name: Sign with AMO
+      - name: Import distribution certificate
         env:
-          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
-          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
-          npx --yes web-ext@latest sign \
-            --source-dir=src \
-            --artifacts-dir=dist \
-            --channel=unlisted
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain"
+          CERT_PATH="$RUNNER_TEMP/build_certificate.p12"
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*.xpi
-          generate_release_notes: true
-          body: |
-            ## Install in Firefox
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
 
-            Click the signed `.xpi` in the assets below and confirm the install
-            prompt. Mozilla has signed the build, so no `about:config` overrides
-            or Developer Edition are required.
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | tr -d '"')
+
+      - name: Install App Store Connect API key
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY" > "$KEY_PATH"
+          echo "ASC_KEY_PATH=$KEY_PATH" >> "$GITHUB_ENV"
+
+      - name: Archive
+        run: |
+          xcodebuild \
+            -project FixReddit.xcodeproj \
+            -scheme FixReddit \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/FixReddit.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyID "${{ secrets.APP_STORE_CONNECT_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
+            MARKETING_VERSION=${{ steps.version.outputs.version }} \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            archive
+
+      - name: Export and upload to App Store Connect
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>destination</key>
+            <string>upload</string>
+            <key>teamID</key>
+            <string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/FixReddit.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyID "${{ secrets.APP_STORE_CONNECT_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" \
+            -authenticationKeyPath "$ASC_KEY_PATH"

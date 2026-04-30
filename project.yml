@@ -1,0 +1,70 @@
+name: FixReddit
+options:
+  bundleIdPrefix: com.agavra
+  deploymentTarget:
+    iOS: "15.0"
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+targets:
+  FixReddit:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: FixReddit
+    dependencies:
+      - target: FixRedditExtension
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.agavra.fixreddit
+        INFOPLIST_FILE: FixReddit/Info.plist
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+  FixRedditExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: Extension/SafariWebExtensionHandler.swift
+      - path: src/manifest.json
+        buildPhase: resources
+      - path: src/rules.json
+        buildPhase: resources
+      - path: src/background.js
+        buildPhase: resources
+      - path: src/content.js
+        buildPhase: resources
+      - path: src/fr-bootstrap.js
+        buildPhase: resources
+      - path: src/fr-parser.js
+        buildPhase: resources
+      - path: src/fr-actions.js
+        buildPhase: resources
+      - path: src/fr-render.js
+        buildPhase: resources
+      - path: src/fr-app.css
+        buildPhase: resources
+      - path: src/reddit-mobile.css
+        buildPhase: resources
+      - path: src/popup.html
+        buildPhase: resources
+      - path: src/popup.css
+        buildPhase: resources
+      - path: src/_locales
+        type: folder
+        buildPhase: resources
+      - path: src/images
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.agavra.fixreddit.Extension
+        INFOPLIST_FILE: Extension/Info.plist
+        OTHER_LDFLAGS: "$(inherited) -framework SafariServices"
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
