@@ -2,18 +2,32 @@
   if (!window.__fr) window.__fr = {};
 
   const SVG = {
+    arrowUp:
+      '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 5v14M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    arrowDown:
+      '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5M5 12l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     chevronUp:
       '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     chevronDown:
       '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    chevronLeft:
+      '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     chevronRight:
       '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    speech:
-      '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 5h16v11H8l-4 4V5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    bubble:
+      '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4h-.5A.5.5 0 0 1 4 16.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    share:
+      '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 4v12M8 8l4-4 4 4M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    bookmark:
+      '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
     moreH:
-      '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="6" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18" cy="12" r="1.6" fill="currentColor"/></svg>',
+      '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="5" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="19" cy="12" r="1.7" fill="currentColor"/></svg>',
     image:
       '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.4" fill="currentColor"/><path d="M5 17l4-4 3 3 4-4 3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    link:
+      '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 14a4 4 0 0 1 0-5.7l3-3a4 4 0 1 1 5.7 5.7l-1.5 1.5M14 10a4 4 0 0 1 0 5.7l-3 3a4 4 0 1 1-5.7-5.7l1.5-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    xmark:
+      '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
   };
 
   function el(tag, props, ...children) {
@@ -55,45 +69,85 @@
     return String(n);
   }
 
-  function renderVoteColumn(post) {
+  const AGE_UNIT = {
+    year: "y", month: "mo", week: "w", day: "d",
+    hour: "h", minute: "m", second: "s",
+  };
+
+  function compactAge(textValue) {
+    if (!textValue) return "";
+    const m = textValue.match(/(\d+)\s*(year|month|week|day|hour|minute|second)s?\s*ago/i);
+    if (m) return m[1] + (AGE_UNIT[m[2].toLowerCase()] || m[2][0]);
+    return textValue;
+  }
+
+  function bumpEl(node) {
+    if (!node) return;
+    node.classList.remove("fr-bump");
+    void node.offsetWidth;
+    node.classList.add("fr-bump");
+  }
+
+  function faviconFor(url) {
+    try {
+      const u = new URL(url, location.href);
+      return "https://" + u.hostname + "/favicon.ico";
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // renderVoteGroup builds a horizontal up/score/down trio used in card
+  // action rows, OP cards, and comment action rows. The optional
+  // `applyExtra` lets callers attach behaviour (e.g. swipe sync) via the
+  // returned `applyState` closure.
+  function renderVoteGroup(model, opts) {
     const actions = window.__fr.actions;
+    const variant = (opts && opts.variant) || "card";
     const up = el("button", {
       class: "fr-vote fr-vote-up",
       type: "button",
       attrs: { "aria-label": "Upvote" },
-      html: SVG.chevronUp,
+      html: SVG.arrowUp,
     });
     const down = el("button", {
       class: "fr-vote fr-vote-down",
       type: "button",
       attrs: { "aria-label": "Downvote" },
-      html: SVG.chevronDown,
+      html: SVG.arrowDown,
     });
-    const score = el("div", {
-      class: "fr-score",
-      text: fmtScore(post.score),
+    const score = el("span", {
+      class: "fr-vote-score",
+      text: fmtScore(model.score),
     });
-    const col = el("div", { class: "fr-votecol" }, up, score, down);
+    const row = el("div", { class: "fr-votegroup fr-votegroup-" + variant }, up, score, down);
 
     function applyState({ dir, score: s }) {
-      col.classList.toggle("fr-voted-up", dir === 1);
-      col.classList.toggle("fr-voted-down", dir === -1);
-      score.textContent = fmtScore(s);
+      row.classList.toggle("fr-voted-up", dir === 1);
+      row.classList.toggle("fr-voted-down", dir === -1);
+      score.textContent = s != null ? fmtScore(s) : "•";
+      bumpEl(score);
+      if (opts && typeof opts.onState === "function") opts.onState({ dir, score: s });
     }
 
     up.addEventListener("click", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      actions.castVote(post, "up", applyState);
+      actions.castVote(model, "up", applyState);
     });
     down.addEventListener("click", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      actions.castVote(post, "down", applyState);
+      actions.castVote(model, "down", applyState);
     });
-    return col;
+    return { row, applyState };
   }
 
+  // renderThumb returns null for self-posts (let the title fill width)
+  // and for external links without a real thumbnail (a generic link
+  // glyph next to the domain reads cleaner than a "LINK" placeholder).
+  // NSFW gets a tinted square; image/video posts show their thumbnail
+  // with a small media badge if it's a gallery.
   function renderThumb(post) {
     if (post.isNsfw) {
       return el(
@@ -106,14 +160,7 @@
       );
     }
     if (post.isSelf) {
-      return el(
-        "a",
-        {
-          class: "fr-thumb fr-thumb-self",
-          href: post.permalink || "#",
-        },
-        el("span", { class: "fr-thumb-tag", text: "TEXT" })
-      );
+      return null;
     }
     if (post.thumbnail) {
       const a = el("a", {
@@ -132,57 +179,52 @@
       }
       return a;
     }
-    return el(
-      "a",
-      {
-        class: "fr-thumb fr-thumb-link",
-        href: post.url || post.permalink,
-      },
-      el("span", { class: "fr-thumb-tag", text: "LINK" })
-    );
-  }
-
-  function renderTagline(post) {
-    const subA = el("a", {
-      class: "fr-meta-sub",
-      href: "/r/" + post.subreddit + "/",
-      text: "r/" + post.subreddit,
-    });
-    const authorA = el("a", {
-      class: "fr-meta-author",
-      href: "/user/" + post.author + "/",
-      text: "u/" + post.author,
-    });
-    const ageEl = el("span", {
-      class: "fr-meta-age",
-      text: post.ageText || "",
-    });
-    const domain = post.domain || "";
-    const items = [subA, sep(), authorA, sep(), ageEl];
-    if (domain) {
-      items.push(sep());
-      const isExternal = !/^self\./.test(domain);
-      if (isExternal && post.url) {
-        items.push(
-          el("a", {
-            class: "fr-meta-domain",
-            href: post.url,
-            attrs: { target: "_self" },
-            text: domain,
-          })
-        );
-      } else {
-        items.push(el("span", { class: "fr-meta-domain", text: domain }));
-      }
-    }
-    return el("div", { class: "fr-tagline" }, ...items);
+    return null;
   }
 
   function sep() {
     return el("span", { class: "fr-sep", attrs: { "aria-hidden": "true" }, text: "·" });
   }
 
-  function renderActionRow(post) {
+  function renderTagline(post) {
+    const wrap = el("div", { class: "fr-tagline" });
+    if (post.subreddit) {
+      wrap.appendChild(el("a", {
+        class: "fr-meta-sub",
+        href: "/r/" + post.subreddit + "/",
+        text: "r/" + post.subreddit,
+      }));
+    }
+    if (post.author && !/^\[deleted\]?$/.test(post.author)) {
+      wrap.appendChild(el("a", {
+        class: "fr-meta-author",
+        href: "/user/" + post.author + "/",
+        text: "u/" + post.author,
+      }));
+    }
+    if (post.ageText) {
+      wrap.appendChild(el("span", { class: "fr-meta-age", text: compactAge(post.ageText) }));
+    }
+    const domain = post.domain || "";
+    if (domain && !/^self\./.test(domain)) {
+      if (post.url) {
+        wrap.appendChild(el("a", {
+          class: "fr-meta-domain",
+          href: post.url,
+          attrs: { target: "_self" },
+          text: domain,
+        }));
+      } else {
+        wrap.appendChild(el("span", { class: "fr-meta-domain", text: domain }));
+      }
+    }
+    return wrap;
+  }
+
+  function renderActionRow(post, voteHooks) {
+    const vote = renderVoteGroup(post, { variant: "card", onState: voteHooks && voteHooks.onState });
+    if (voteHooks) voteHooks.applyState = vote.applyState;
+
     const comments = el(
       "a",
       {
@@ -190,12 +232,27 @@
         href: post.permalink,
         attrs: { "aria-label": post.commentCount + " comments" },
       },
-      el("span", { class: "fr-action-icon", html: SVG.speech }),
-      el("span", {
-        class: "fr-action-label",
-        text: fmtCount(post.commentCount) + " comments",
-      })
+      el("span", { class: "fr-action-icon", html: SVG.bubble }),
+      el("span", { class: "fr-action-label", text: fmtCount(post.commentCount) })
     );
+
+    const share = el("button", {
+      class: "fr-action fr-action-share",
+      type: "button",
+      attrs: { "aria-label": "Share" },
+      html: SVG.share,
+    });
+    share.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const shareUrl = post.permalink ? location.origin + post.permalink : location.href;
+      if (navigator.share) {
+        navigator.share({ title: post.title, url: shareUrl }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).catch(() => {});
+      }
+    });
+
     const more = el("button", {
       class: "fr-action fr-action-more",
       type: "button",
@@ -206,7 +263,8 @@
       e.stopPropagation();
       e.preventDefault();
     });
-    return el("div", { class: "fr-actions" }, comments, more);
+
+    return el("div", { class: "fr-actions" }, vote.row, comments, share, more);
   }
 
   function renderCard(post) {
@@ -230,26 +288,28 @@
       );
     }
 
-    const body = el(
-      "div",
-      { class: "fr-card-body" },
-      titleA,
-      renderTagline(post),
-      renderActionRow(post)
-    );
+    const body = el("div", { class: "fr-card-body" }, titleA, renderTagline(post));
 
-    const layout = el(
-      "div",
-      { class: "fr-card-layout" },
-      renderVoteColumn(post),
-      renderThumb(post),
-      body
-    );
+    const thumb = renderThumb(post);
+    const head = el("div", { class: "fr-card-head" });
+    if (thumb) head.appendChild(thumb);
+    head.appendChild(body);
 
-    card.appendChild(layout);
+    const voteHooks = {};
+    const actionRow = renderActionRow(post, voteHooks);
+
+    const swipeBg = el("div", { class: "fr-card-swipebg" },
+      el("div", { class: "fr-card-swipebg-up", html: SVG.arrowUp }),
+      el("div", { class: "fr-card-swipebg-down", html: SVG.arrowDown })
+    );
+    const surface = el("div", { class: "fr-card-surface" }, head, actionRow);
+    card.append(swipeBg, surface);
+
+    attachSwipeVote(card, surface, post, voteHooks);
 
     const open = (event) => {
       if (window.__fr.actions.shouldDeferToTarget(event.target)) return;
+      if (card.classList.contains("fr-swiping")) return;
       window.__fr.actions.navigate(post.permalink);
     };
     card.addEventListener("click", open);
@@ -261,6 +321,85 @@
     });
 
     return card;
+  }
+
+  // Swipe-right-to-upvote / swipe-left-to-downvote on cards. Locks to
+  // horizontal once we see clear horizontal intent so vertical scroll is
+  // never starved. Threshold is fraction-of-card-width so it scales with
+  // device size.
+  function attachSwipeVote(card, surface, post, hooks) {
+    const SWIPE_THRESHOLD = 0.22; // 22% of card width
+    const VERTICAL_TOLERANCE = 12;
+    const HORIZONTAL_GATE = 8;
+    let startX = 0;
+    let startY = 0;
+    let dx = 0;
+    let locked = null; // null | "h" | "v"
+    let active = false;
+
+    function onStart(e) {
+      if (!e.touches || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      dx = 0;
+      locked = null;
+      active = true;
+      surface.style.transition = "none";
+    }
+    function onMove(e) {
+      if (!active || !e.touches || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const ax = t.clientX - startX;
+      const ay = t.clientY - startY;
+      if (locked == null) {
+        if (Math.abs(ay) > VERTICAL_TOLERANCE && Math.abs(ay) > Math.abs(ax)) {
+          locked = "v";
+          active = false;
+          return;
+        }
+        if (Math.abs(ax) > HORIZONTAL_GATE) locked = "h";
+      }
+      if (locked !== "h") return;
+      e.preventDefault();
+      dx = ax;
+      card.classList.add("fr-swiping");
+      const damp = Math.sign(dx) * Math.min(Math.abs(dx), card.clientWidth * 0.5);
+      surface.style.transform = "translateX(" + damp + "px)";
+      const progress = Math.min(1, Math.abs(dx) / (card.clientWidth * SWIPE_THRESHOLD));
+      card.classList.toggle("fr-swipe-up-armed", dx > 0 && progress >= 1);
+      card.classList.toggle("fr-swipe-down-armed", dx < 0 && progress >= 1);
+      card.style.setProperty("--fr-swipe-progress", String(progress));
+    }
+    function onEnd() {
+      if (!active && locked !== "h") {
+        return;
+      }
+      active = false;
+      surface.style.transition = "transform 0.22s cubic-bezier(0.32, 0.72, 0, 1)";
+      surface.style.transform = "translateX(0)";
+      const armedUp = card.classList.contains("fr-swipe-up-armed");
+      const armedDown = card.classList.contains("fr-swipe-down-armed");
+      card.classList.remove("fr-swipe-up-armed", "fr-swipe-down-armed");
+      card.style.removeProperty("--fr-swipe-progress");
+      const wasSwipe = locked === "h" && Math.abs(dx) > 4;
+      // Keep the swiping class on briefly so the click handler sees it.
+      if (wasSwipe) {
+        setTimeout(() => card.classList.remove("fr-swiping"), 100);
+      } else {
+        card.classList.remove("fr-swiping");
+      }
+      if (armedUp && hooks.applyState) {
+        window.__fr.actions.castVote(post, "up", hooks.applyState);
+      } else if (armedDown && hooks.applyState) {
+        window.__fr.actions.castVote(post, "down", hooks.applyState);
+      }
+    }
+
+    card.addEventListener("touchstart", onStart, { passive: true });
+    card.addEventListener("touchmove", onMove, { passive: false });
+    card.addEventListener("touchend", onEnd, { passive: true });
+    card.addEventListener("touchcancel", onEnd, { passive: true });
   }
 
   function renderPagination(model) {
@@ -297,9 +436,40 @@
     const pag = renderPagination(model);
     if (pag) root.appendChild(pag);
     mountInto.appendChild(root);
+
+    const top = mountFloatingTopButton();
+
     return {
       dispose() {
         if (root.parentNode) root.parentNode.removeChild(root);
+        if (top) top.dispose();
+      },
+    };
+  }
+
+  function mountFloatingTopButton() {
+    const btn = el("button", {
+      class: "fr-fab fr-fab-top",
+      type: "button",
+      attrs: { "aria-label": "Back to top" },
+      html: SVG.arrowUp,
+    });
+    document.body.appendChild(btn);
+    btn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    let visible = false;
+    function update() {
+      const should = window.scrollY > 600;
+      if (should === visible) return;
+      visible = should;
+      btn.classList.toggle("is-visible", visible);
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    return {
+      dispose() {
+        window.removeEventListener("scroll", update);
+        if (btn.parentNode) btn.parentNode.removeChild(btn);
       },
     };
   }
@@ -340,31 +510,39 @@
       '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
 
     const header = el("header", { class: "fr-header" });
-    const menuBtn = el("button", {
-      class: "fr-h-btn fr-h-menu",
-      type: "button",
-      attrs: { "aria-label": "Open menu" },
-      html: SVG_MENU,
-    });
     const path = location.pathname || "";
     const m = path.match(/^\/r\/([^\/]+)/);
-    const isFrontpage = !m;
-    const brand = el(
-      "a",
-      {
-        class: "fr-h-brand",
-        href: m ? "/r/" + m[1] + "/" : "/",
-      },
-      isFrontpage
-        ? el("span", { class: "fr-h-brand-name", text: "reddit" })
-        : (() => {
-            const w = el("span", { class: "fr-h-brand-pair" });
-            w.appendChild(el("span", { class: "fr-h-brand-r", text: "r" }));
-            w.appendChild(el("span", { class: "fr-h-brand-slash", text: "/" }));
-            w.appendChild(el("span", { class: "fr-h-brand-sub", text: m[1] }));
-            return w;
-          })()
-    );
+    const isComments = /\/comments\//.test(path);
+
+    let leadingBtn;
+    if (isComments) {
+      leadingBtn = el("button", {
+        class: "fr-h-btn fr-h-back",
+        type: "button",
+        attrs: { "aria-label": "Back" },
+        html: SVG.chevronLeft,
+      });
+      leadingBtn.addEventListener("click", () => {
+        if (history.length > 1) history.back();
+        else if (m) location.href = "/r/" + m[1] + "/";
+        else location.href = "/";
+      });
+    } else {
+      leadingBtn = el("button", {
+        class: "fr-h-btn fr-h-menu",
+        type: "button",
+        attrs: { "aria-label": "Open menu" },
+        html: SVG_MENU,
+      });
+      leadingBtn.addEventListener("click", () => state.openDrawer("nav"));
+    }
+
+    const brandText = m ? "r/" + m[1] : "reddit";
+    const brand = el("a", {
+      class: "fr-h-brand",
+      href: m ? "/r/" + m[1] + "/" : "/",
+      text: brandText,
+    });
 
     const searchBtn = el("button", {
       class: "fr-h-btn fr-h-search",
@@ -379,13 +557,11 @@
       html: SVG_USER,
     });
     if (state.user && state.user.inboxUnread > 0) {
-      const dot = el("span", { class: "fr-h-dot", attrs: { "aria-hidden": "true" } });
-      accountBtn.appendChild(dot);
+      accountBtn.appendChild(el("span", { class: "fr-h-dot", attrs: { "aria-hidden": "true" } }));
     }
 
-    header.append(menuBtn, brand, el("div", { class: "fr-h-spacer" }), searchBtn, accountBtn);
+    header.append(leadingBtn, brand, el("div", { class: "fr-h-spacer" }), searchBtn, accountBtn);
 
-    menuBtn.addEventListener("click", () => state.openDrawer("nav"));
     searchBtn.addEventListener("click", () => state.openDrawer("search"));
     accountBtn.addEventListener("click", () => state.openDrawer("account"));
 
@@ -404,7 +580,7 @@
       class: "fr-drawer-close",
       type: "button",
       attrs: { "aria-label": "Close menu" },
-      text: "Close",
+      html: SVG.xmark,
     });
 
     panel.appendChild(closeBtn);
@@ -675,23 +851,25 @@
     head.appendChild(el("h1", { class: "fr-op-title", text: post.title || "" }));
 
     const meta = el("div", { class: "fr-op-meta" });
-    meta.appendChild(el("a", {
-      class: "fr-op-sub",
-      href: "/r/" + post.subreddit + "/",
-      text: "r/" + post.subreddit,
-    }));
-    meta.appendChild(sep());
-    meta.appendChild(el("a", {
-      class: "fr-op-author",
-      href: "/user/" + post.author + "/",
-      text: "u/" + post.author,
-    }));
-    meta.appendChild(sep());
-    meta.appendChild(el("span", { class: "fr-op-age", text: post.ageText || "" }));
-    if (post.domain) {
-      meta.appendChild(sep());
-      const isExternal = !/^self\./.test(post.domain);
-      if (isExternal && post.url) {
+    if (post.subreddit) {
+      meta.appendChild(el("a", {
+        class: "fr-op-sub",
+        href: "/r/" + post.subreddit + "/",
+        text: "r/" + post.subreddit,
+      }));
+    }
+    if (post.author && !/^\[deleted\]?$/.test(post.author)) {
+      meta.appendChild(el("a", {
+        class: "fr-op-author",
+        href: "/user/" + post.author + "/",
+        text: "u/" + post.author,
+      }));
+    }
+    if (post.ageText) {
+      meta.appendChild(el("span", { class: "fr-op-age", text: compactAge(post.ageText) }));
+    }
+    if (post.domain && !/^self\./.test(post.domain)) {
+      if (post.url) {
         meta.appendChild(el("a", {
           class: "fr-op-domain",
           href: post.url,
@@ -727,74 +905,109 @@
     }
 
     const footer = el("div", { class: "fr-op-footer" });
-    const vote = renderVoteColumnInline(post);
-    footer.appendChild(vote);
+    const vote = renderVoteGroup(post, { variant: "op" });
+    footer.appendChild(vote.row);
+    footer.appendChild(
+      el("span", { class: "fr-op-comments-icon", html: SVG.bubble })
+    );
     footer.appendChild(el("span", {
       class: "fr-op-comments",
-      text: fmtCount(post.commentCount) + " comments",
+      text: fmtCount(post.commentCount),
     }));
+    const opShare = el("button", {
+      class: "fr-action fr-action-share fr-op-share",
+      type: "button",
+      attrs: { "aria-label": "Share" },
+      html: SVG.share,
+    });
+    opShare.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const shareUrl = post.permalink ? location.origin + post.permalink : location.href;
+      if (navigator.share) {
+        navigator.share({ title: post.title, url: shareUrl }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).catch(() => {});
+      }
+    });
+    footer.appendChild(opShare);
     card.appendChild(footer);
 
     return card;
   }
 
-  function renderVoteColumnInline(post) {
-    const actions = window.__fr.actions;
-    const row = el("div", { class: "fr-op-vote" });
-    const up = el("button", {
-      class: "fr-vote fr-vote-up",
-      type: "button",
-      attrs: { "aria-label": "Upvote" },
-      html: SVG.chevronUp,
-    });
-    const down = el("button", {
-      class: "fr-vote fr-vote-down",
-      type: "button",
-      attrs: { "aria-label": "Downvote" },
-      html: SVG.chevronDown,
-    });
-    const score = el("span", {
-      class: "fr-op-score",
-      text: fmtScore(post.score),
-    });
-    row.append(up, score, down);
-
-    function applyState({ dir, score: s }) {
-      row.classList.toggle("fr-voted-up", dir === 1);
-      row.classList.toggle("fr-voted-down", dir === -1);
-      score.textContent = fmtScore(s);
-    }
-    up.addEventListener("click", (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      actions.castVote(post, "up", applyState);
-    });
-    down.addEventListener("click", (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      actions.castVote(post, "down", applyState);
-    });
-    return row;
-  }
-
   function renderSortControl(model) {
     if (!model.sortOptions || !model.sortOptions.length) return null;
-    const sel = el("select", { class: "fr-sort" });
-    model.sortOptions.forEach((opt) => {
-      const o = document.createElement("option");
-      o.value = opt.value;
-      o.textContent = opt.label;
-      if (opt.selected) o.selected = true;
-      sel.appendChild(o);
+    const selected = model.sortOptions.find((o) => o.selected);
+    const button = el("button", {
+      class: "fr-sort-button",
+      type: "button",
+      attrs: { "aria-haspopup": "dialog" },
     });
-    sel.addEventListener("change", () => {
-      const url = sel.value;
-      if (url) location.href = url;
+    button.appendChild(el("span", { class: "fr-sort-label", text: "Sort:" }));
+    button.appendChild(el("span", {
+      class: "fr-sort-current",
+      text: (selected && selected.label) || (model.sortOptions[0] && model.sortOptions[0].label) || "top",
+    }));
+    button.appendChild(el("span", { class: "fr-sort-chevron", html: SVG.chevronDown }));
+    button.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openActionSheet({
+        title: "Sort comments",
+        options: model.sortOptions,
+        onSelect: (opt) => {
+          if (opt && opt.value) location.href = opt.value;
+        },
+        cancelLabel: "Cancel",
+      });
     });
     const wrap = el("div", { class: "fr-sort-wrap" });
-    wrap.appendChild(el("label", { class: "fr-sort-label", text: "Sort:" }));
-    wrap.appendChild(sel);
+    wrap.appendChild(button);
     return wrap;
+  }
+
+  function openActionSheet(opts) {
+    const root = el("div", { class: "fr-sheet", attrs: { role: "dialog" } });
+    const scrim = el("div", { class: "fr-sheet-scrim" });
+    const panel = el("div", { class: "fr-sheet-panel" });
+    panel.appendChild(el("div", { class: "fr-sheet-handle", attrs: { "aria-hidden": "true" } }));
+    if (opts.title) {
+      panel.appendChild(el("div", { class: "fr-sheet-title", text: opts.title }));
+    }
+    const list = el("div", { class: "fr-sheet-list" });
+    (opts.options || []).forEach((opt) => {
+      const row = el("button", {
+        class: "fr-sheet-row" + (opt.selected ? " is-selected" : ""),
+        type: "button",
+        text: opt.label,
+      });
+      row.addEventListener("click", () => {
+        close();
+        if (opts.onSelect) opts.onSelect(opt);
+      });
+      list.appendChild(row);
+    });
+    panel.appendChild(list);
+    if (opts.cancelLabel) {
+      const cancel = el("button", {
+        class: "fr-sheet-cancel",
+        type: "button",
+        text: opts.cancelLabel,
+      });
+      cancel.addEventListener("click", () => close());
+      panel.appendChild(cancel);
+    }
+    root.append(scrim, panel);
+    document.body.appendChild(root);
+    requestAnimationFrame(() => root.classList.add("is-open"));
+
+    function close() {
+      root.classList.remove("is-open");
+      setTimeout(() => {
+        if (root.parentNode) root.parentNode.removeChild(root);
+      }, 240);
+    }
+    scrim.addEventListener("click", close);
+    return { close };
   }
 
   function renderComment(node) {
@@ -808,29 +1021,23 @@
 
     const head = el("div", { class: "fr-c-head" });
     if (node.author) {
-      const a = el("a", {
+      head.appendChild(el("a", {
         class: "fr-c-author",
         href: "/user/" + node.author + "/",
         text: "u/" + node.author,
-      });
-      head.appendChild(a);
-    }
-    const flairs = node.flairs || [];
-    flairs.forEach((f) => {
-      const cls =
-        "fr-c-flair fr-c-flair-" + f.toLowerCase();
-      head.appendChild(el("span", { class: cls, text: f }));
-    });
-    if (node.score != null) {
-      head.appendChild(sep());
-      head.appendChild(el("span", {
-        class: "fr-c-score",
-        text: fmtScore(node.score) + " pts",
       }));
     }
-    if (node.ageText) {
-      head.appendChild(sep());
-      head.appendChild(el("span", { class: "fr-c-age", text: node.ageText }));
+    (node.flairs || []).forEach((f) => {
+      head.appendChild(el("span", {
+        class: "fr-c-flair fr-c-flair-" + f.toLowerCase(),
+        text: f,
+      }));
+    });
+    const metaParts = [];
+    if (node.score != null) metaParts.push(fmtScore(node.score));
+    if (node.ageText) metaParts.push(compactAge(node.ageText));
+    if (metaParts.length) {
+      head.appendChild(el("span", { class: "fr-c-meta", text: metaParts.join(" · ") }));
     }
 
     const toggle = el("button", {
@@ -884,47 +1091,15 @@
 
   function renderCommentActions(node) {
     const row = el("div", { class: "fr-c-actions" });
-    const actions = window.__fr.actions;
-
-    const up = el("button", {
-      class: "fr-vote fr-vote-up fr-c-vote",
-      type: "button",
-      attrs: { "aria-label": "Upvote" },
-      html: SVG.chevronUp,
-    });
-    const score = el("span", {
-      class: "fr-c-score-inline",
-      text: node.score != null ? fmtScore(node.score) : "•",
-    });
-    const down = el("button", {
-      class: "fr-vote fr-vote-down fr-c-vote",
-      type: "button",
-      attrs: { "aria-label": "Downvote" },
-      html: SVG.chevronDown,
-    });
-    function applyState({ dir, score: s }) {
-      row.classList.toggle("fr-voted-up", dir === 1);
-      row.classList.toggle("fr-voted-down", dir === -1);
-      score.textContent = s != null ? fmtScore(s) : "•";
-    }
-    up.addEventListener("click", (e) => {
-      e.stopPropagation();
-      actions.castVote(node, "up", applyState);
-    });
-    down.addEventListener("click", (e) => {
-      e.stopPropagation();
-      actions.castVote(node, "down", applyState);
-    });
-
-    row.append(up, score, down);
+    const vote = renderVoteGroup(node, { variant: "comment" });
+    row.appendChild(vote.row);
 
     if (node.replyUrl) {
-      const reply = el("a", {
+      row.appendChild(el("a", {
         class: "fr-c-reply",
         href: node.replyUrl,
         text: "Reply",
-      });
-      row.appendChild(reply);
+      }));
     }
 
     const more = el("button", {
